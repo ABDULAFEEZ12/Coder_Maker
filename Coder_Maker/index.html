@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Code Maker AI</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen p-6">
+  <div class="max-w-3xl mx-auto">
+    <h1 class="text-4xl font-bold mb-6 text-center">💻 Code Maker AI</h1>
+
+    <div class="bg-gray-800 p-6 rounded-2xl shadow-lg">
+      <label for="prompt" class="block mb-2 font-semibold">Ask the AI anything about code:</label>
+      <textarea id="prompt" rows="4" placeholder="e.g. Write a Python function that checks for prime numbers" class="w-full p-4 rounded-lg bg-gray-700 text-white resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+      
+      <button onclick="generate()" class="mt-4 w-full py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-bold transition">🧠 Generate</button>
+
+      <div id="response" class="mt-6 p-4 bg-gray-700 rounded-lg whitespace-pre-wrap text-sm">Your answer will appear here...</div>
+    </div>
+  </div>
+
+  <script>
+    async function generate() {
+      const prompt = document.getElementById("prompt").value;
+      const responseDiv = document.getElementById("response");
+      responseDiv.textContent = "⏳ Thinking...";
+
+      try {
+        const res = await fetch("https://code-maker-1.onrender.com/generate", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ prompt })
+        });
+
+        const data = await res.json();
+        if (data.result) {
+          responseDiv.textContent = data.result;
+        } else {
+          responseDiv.textContent = "❌ Error: " + (data.error || "Something went wrong.");
+        }
+      } catch (err) {
+        responseDiv.textContent = "❌ Network Error";
+      }
+    }
+  </script>
+</body>
+</html>
